@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>Museo de los Siete Días</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Archivo:wght@400;500;600&display=swap">
+<style>
+/* Layout: the museum floor plan is the index; each room opens into its own wall label (cartela).
+   One deliberate theme: the gallery at night, lit room by room. */
+:root{
+  color-scheme: dark;
+  --wall:#121823;
+  --wall-2:#1a2230;
+  --wall-3:#243040;
+  --ink:#eceae1;
+  --muted:#8c93a2;
+  --brass:#c9a35e;
+  --brass-dim:#7e6837;
+  --line:rgba(236,234,225,.15);
+  --spot:rgba(255,239,208,.09);
+  --font-display:'Bodoni Moda','Didot',Georgia,serif;
+  --font-body:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--wall)}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.museo{
+  max-width:860px;
+  margin:0 auto;
+  padding-inline:20px;
+  padding-block:clamp(28px,7vw,64px) 40px;
+}
+.label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:0;
+}
+.rule{
+  border:0;
+  height:1px;
+  background:var(--brass-dim);
+  margin:22px 0;
+}
+
+/* ---------- portada ---------- */
+.portada h1{
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:clamp(38px,10vw,76px);
+  line-height:1.02;
+  letter-spacing:-.015em;
+  margin:14px 0 0;
+  text-wrap:balance;
+}
+.portada h1 em{font-style:italic;color:var(--brass)}
+.ticket{
+  display:flex;
+  align-items:stretch;
+  border:1px solid var(--line);
+  background:var(--wall-2);
+  border-radius:2px;
+  overflow:hidden;
+  max-width:460px;
+}
+.ticket-main{
+  flex:1 1 auto;
+  min-width:0;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.ticket-main strong{
+  font-family:var(--font-display);
+  font-size:21px;
+  font-weight:500;
+  line-height:1.2;
+}
+.ticket-main .sub{font-size:12.5px;color:var(--muted)}
+.ticket-stub{
+  flex:0 0 auto;
+  padding:14px 16px;
+  border-left:1px dashed var(--line);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+  text-align:center;
+}
+.ticket-stub .num{
+  font-family:var(--font-display);
+  font-size:17px;
+  color:var(--brass);
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- plano ---------- */
+.plano-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:14px;
+}
+.progreso{
+  margin:0;
+  font-size:12px;
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.plano{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:7px;
+}
+.sala{
+  grid-column:span 2;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:5px;
+  min-height:124px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--wall-2);
+  color:inherit;
+  font-family:inherit;
+  text-align:left;
+  cursor:pointer;
+  overflow:hidden;
+  transition:border-color .25s ease,background .25s ease,transform .25s ease;
+  animation:entra .5s both;
+  animation-delay:calc(var(--d,0) * 55ms + 120ms);
+}
+.sala:nth-child(4),.sala:nth-child(5),
+.sala:nth-child(6),.sala:nth-child(7){grid-column:span 3}
+.sala.final{grid-column:span 6;min-height:96px}
+.sala::before{
+  content:'';
+  position:absolute;
+  inset:-40% -20% auto;
+  height:150%;
+  background:radial-gradient(ellipse at 50% 0,var(--spot),transparent 68%);
+  opacity:0;
+  transition:opacity .3s ease;
+  pointer-events:none;
+}
+.sala:hover,.sala:focus-visible{
+  border-color:var(--brass-dim);
+  background:var(--wall-3);
+  transform:translateY(-1px);
+}
+.sala:hover::before,.sala:focus-visible::before{opacity:1}
+.sala:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.sala-num{
+  font-family:var(--font-display);
+  font-size:13px;
+  letter-spacing:.1em;
+  color:var(--brass);
+}
+.sala-tit{
+  font-family:var(--font-display);
+  font-size:19px;
+  line-height:1.2;
+  margin-top:auto;
+}
+.sala-meta{
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.visto{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:6px;
+  height:6px;
+  background:var(--brass);
+  border-radius:50%;
+  opacity:0;
+  transition:opacity .2s ease;
+}
+.sala[data-visto="1"] .visto{opacity:1}
+.sala.locked{cursor:default}
+.sala.locked .sala-tit{color:var(--muted)}
+.sala.locked:hover{transform:none;border-color:var(--line);background:var(--wall-2)}
+.sala.locked:hover::before{opacity:0}
+.aviso{
+  margin:16px 0 0;
+  font-size:12.5px;
+  color:var(--muted);
+  max-width:48ch;
+}
+.nota-cerrada{margin:10px 0 0;font-size:12.5px;color:var(--brass)}
+
+/* ---------- pieza ---------- */
+.volver{
+  display:inline-block;
+  background:var(--wall-2);
+  border:1px solid var(--line);
+  border-radius:2px;
+  padding:9px 15px;
+  margin:0 0 26px;
+  font-family:inherit;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink);
+  cursor:pointer;
+  transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.volver:hover{color:var(--brass);border-color:var(--brass-dim);background:var(--wall-3)}
+.volver:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.cartela{
+  border-left:1px solid var(--brass-dim);
+  padding-left:clamp(16px,4vw,30px);
+  animation:entra .45s both;
+}
+.inv{
+  margin:0;
+  font-size:11px;
+  letter-spacing:.18em;
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.p-titulo{
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:clamp(30px,7vw,52px);
+  line-height:1.08;
+  letter-spacing:-.01em;
+  margin:10px 0 6px;
+  text-wrap:balance;
+}
+.p-sub{
+  margin:0 0 26px;
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:17px;
+  color:var(--brass);
+}
+.ficha-tecnica{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:9px 22px;
+  margin:0 0 26px;
+  padding:0 0 24px;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+}
+.ficha-tecnica dt{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding-top:3px;
+}
+.ficha-tecnica dd{margin:0;min-width:0}
+.p-ficha{max-width:60ch}
+.p-ficha p{margin:0 0 1em}
+.p-nota{
+  margin:30px 0 0;
+  padding:18px 20px;
+  background:var(--wall-2);
+  border:1px solid var(--line);
+  border-radius:2px;
+  max-width:60ch;
+}
+.p-nota p.cita{
+  margin:8px 0 0;
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:18px;
+  line-height:1.5;
+}
+.inventario{
+  margin:4px 0 26px;
+  padding:18px 20px;
+  border:1px solid var(--line);
+  border-left:1px solid var(--brass-dim);
+  border-radius:2px;
+  background:var(--wall-2);
+  max-width:60ch;
+}
+.inventario ul{
+  list-style:none;
+  margin:12px 0 0;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+}
+.inventario li{
+  font-family:var(--font-display);
+  font-size:18px;
+  line-height:1.4;
+}
+.inventario li:not(:last-child)::after{
+  content:'·';
+  color:var(--brass);
+  margin:0 .5em;
+}
+.inventario .pie-lista{
+  margin:14px 0 0;
+  font-size:12.5px;
+  color:var(--muted);
+}
+.pendiente{
+  color:var(--muted);
+  font-family:var(--font-body);
+  font-style:normal;
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  border-bottom:1px dotted var(--brass-dim);
+  padding-bottom:1px;
+}
+.pieza-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:space-between;
+  margin-top:40px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+.pieza-nav button{
+  background:none;
+  border:1px solid var(--line);
+  border-radius:2px;
+  padding:9px 15px;
+  font-family:inherit;
+  font-size:12px;
+  letter-spacing:.08em;
+  color:var(--ink);
+  cursor:pointer;
+  transition:border-color .2s ease,color .2s ease;
+}
+.pieza-nav button:hover:not(:disabled){border-color:var(--brass-dim);color:var(--brass)}
+.pieza-nav button:disabled{opacity:.3;cursor:default}
+.pieza-nav button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.pieza-nav .al-plano{
+  border-color:var(--brass-dim);
+  color:var(--brass);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-size:11px;
+}
+.pieza-nav .al-plano:hover{background:var(--wall-2)}
+
+/* ---------- pie ---------- */
+.pie{
+  margin-top:64px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+  font-size:11.5px;
+  line-height:1.8;
+  color:var(--muted);
+  letter-spacing:.04em;
+}
+.pie strong{color:var(--ink);font-weight:500;letter-spacing:.1em}
+
+@keyframes entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media (max-width:640px){
+  .plano{grid-template-columns:repeat(2,1fr);gap:6px}
+  .sala,
+  .sala:nth-child(4),.sala:nth-child(5),
+  .sala:nth-child(6),.sala:nth-child(7){grid-column:span 1}
+  .sala.final{grid-column:span 2}
+  .ficha-tecnica{grid-template-columns:1fr;gap:3px 0}
+  .ficha-tecnica dd{margin-bottom:10px}
+}
+</style>
+
+</head>
+<body>
+<main class="museo">
+  <header class="portada">
+    <p class="label">Colección permanente · Madrid</p>
+    <h1>Museo de los<br><em>Siete Días</em></h1>
+    <hr class="rule">
+    <div class="ticket">
+      <div class="ticket-main">
+        <p class="label">Entrada</p>
+        <strong id="visitante">Olivia</strong>
+        <span class="sub">Válida indefinidamente · No caduca · Intransferible</span>
+      </div>
+      <div class="ticket-stub">
+        <span class="num">Nº 001</span>
+        <p class="label">Gratis</p>
+      </div>
+    </div>
+  </header>
+
+  <section id="vista-plano" style="margin-top:clamp(40px,8vw,64px)">
+    <div class="plano-head">
+      <p class="label">Plano de la colección</p>
+      <p class="progreso" id="progreso">0 de 7 salas visitadas</p>
+    </div>
+    <div class="plano" id="plano"></div>
+    <p class="aviso">Siete salas, siete días, un mismo Madrid. Puedes empezar por la que quieras: el museo no tiene recorrido obligatorio.</p>
+    <p class="nota-cerrada" id="nota-cerrada" hidden></p>
+  </section>
+
+  <section id="vista-pieza" hidden style="margin-top:clamp(40px,8vw,64px)">
+    <button class="volver" id="volver">← Todas las salas</button>
+    <article class="cartela" id="cartela"></article>
+    <nav class="pieza-nav">
+      <button id="prev">← Sala anterior</button>
+      <button class="al-plano" id="al-plano">Volver al plano</button>
+      <button id="next">Sala siguiente →</button>
+    </nav>
+  </section>
+
+  <footer class="pie">
+    <strong>MUSEO DE LOS SIETE DÍAS</strong><br>
+    Colección privada · Madrid · Siete piezas · Fondo activo<br>
+    Horario: cuando te apetezca. No cierra.<br>
+    Se permite tocar las obras.
+  </footer>
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  /* Una sala por día, en orden. Lo que se quede vacío sale como "en catalogación". */
+  var SALAS = [
+    {
+      n:'I', num:'001',
+      titulo:"Se lanzó",
+      epoca:"Agosto de 2024",
+      lugar:"Plaza de San Cayetano",
+      tecnica:"KFC de Gran Vía sobre ubicación compartida por precaución",
+      ficha:"La pieza más antigua del fondo y la única que no estaba prevista.\n\nHoras antes, el autor come solo en un KFC de Gran Vía lleno de peruanos y envía su ubicación en tiempo real a una persona que todavía no le ha visto la cara. Precaución razonable y, visto lo visto, innecesaria.\n\nA continuación, Plaza de San Cayetano. Ella se lanza y le besa. No consta duda previa por ninguna de las dos partes.\n\nEl resto de la jornada se documenta en dos localizaciones: un McDonald's, utilizado para hacer tiempo, y un parque.",
+      nota:"El primero. No hace falta que ponga nada más, y tampoco sabría."
+    },
+    {
+      n:'II', num:'002',
+      titulo:"Salsa verde radiactiva",
+      epoca:"Enero de 2025",
+      lugar:"Parada de bus, parque y bazar",
+      tecnica:"Indio a domicilio sobre banco de parque, con palomas en actitud de espera",
+      ficha:"Jornada de invierno en tres actos.\n\nPrimero: comida india pedida a domicilio y trasladada a un parque, donde un grupo de palomas se coloca en posición estratégica a la espera de que algo caiga. Algo cae. Mientras tanto, la visitante se mancha de una salsa verde cuyo color no ha podido ser identificado por este museo.\n\nSegundo: clase de iniciación al boxeo y nociones básicas de artes marciales, impartidas sobre césped.\n\nTercero: visita a un bazar, donde ella propone comercializar los «portapops». El proyecto sigue pendiente de financiación.",
+      nota:"Es tu día favorito. Yo lo tengo guardado aparte, en un sitio que no se le enseña a nadie."
+    },
+    {
+      n:'III', num:'003',
+      titulo:"La apuesta de las setas",
+      epoca:"Julio de 2025",
+      lugar:"Buffet, tiendas y parque",
+      tecnica:"Plato de setas de aspecto dudoso sobre par de zapatillas",
+      ficha:"Esta sala documenta una transacción.\n\nEn el buffet se establece una apuesta: ella se compromete a comerse un plato de setas de aspecto francamente turbio; él, a pagarle unas zapatillas. Ambas partes cumplen. El museo da fe.\n\nLa jornada continúa por Primark, Lefties y El Corte Inglés, y se cierra con un llaollao en el parque.\n\nDe todo el día, lo que quedó en el acta fue el buffet. Nadie ha sabido explicar por qué.",
+      nota:"Un buffet aleatorio y unas zapatillas. Así se construye un día bueno."
+    },
+    {
+      n:'IV', num:'004',
+      titulo:"Velas de corazones",
+      epoca:"Agosto de 2025",
+      lugar:"McDonald's, parque y el mismo bazar de enero",
+      tecnica:"Tarta de elaboración propia sobre velas con forma de corazón",
+      ficha:"El autor cumple años y elige con quién.\n\nComida en McDonald's y traslado al parque, donde se entrega una tarta hecha por ella, acompañada de velas de corazones compradas para la ocasión. Consta también un combate amistoso haciendo sombra, sin contacto y sin vencedor declarado.\n\nLa jornada termina en el mismo bazar de la Sala II, lo que convierte ese local en el primer lugar repetido de la colección.\n\nEl resto del contenido de esta sala no se expone al público. Consta íntegramente en la memoria de la visitante.",
+      nota:"No es el día que recuerdo con más detalle. Es el día que elegí, y lo elegí bien."
+    },
+    {
+      n:'V', num:'005',
+      titulo:"Conjuntados de Brasil",
+      epoca:"Agosto de 2025",
+      lugar:"Burger King, Vicio y Five Guys",
+      tecnica:"Dos equipaciones de Brasil sobre baño de Burger King",
+      ficha:"Única pieza del fondo con planificación previa documentada: el vestuario de la jornada se diseñó el día anterior en Canva.\n\nÉl llega cargado con la ropa de los dos. Ella se cambia en el baño del Burger King. Salen conjuntados de Brasil.\n\nItinerario: comida en Vicio, batido en Five Guys y segunda prueba de vestuario en el mismo establecimiento. Parte del material de esta sala no se expone al público; la visitante conserva el expediente completo.\n\nCierra con recorrido de tienda en tienda, sin rumbo fijo.",
+      nota:"Este, el primero y el último. Si tuviera que quedarme con tres, me quedo con estos tres."
+    },
+    {
+      n:'VI', num:'006',
+      titulo:"Recreo",
+      epoca:"Octubre de 2025",
+      lugar:"Su casa",
+      tecnica:"Burger King sobre película a medias, interrumpida por llegada de madre",
+      ficha:"La única sala de la colección situada en un domicilio.\n\nEl encuentro se fija aprovechando el recreo de sus clases. Mientras ella está dentro, él hace tiempo por los alrededores. A la salida quedan en una parada de metro y llegan en autobús.\n\nSe pide comida. Se pone una película. Se termina al oír la puerta.\n\nLa pieza sufrió daños poco después de ingresar en el fondo. Ha sido restaurada. Las grietas no se exhiben, pero están, y el museo prefiere decirlo.",
+      nota:"Un día especial que se me quedó torcido por lo que vino después. Lo expongo igual: el día no tuvo culpa de nada."
+    },
+    {
+      n:'VII', num:'007',
+      titulo:"El vestido",
+      epoca:"Julio de 2026",
+      lugar:"La Gavia, Vallecas",
+      tecnica:"Vestido nuevo sobre centro comercial de Vallecas",
+      ficha:"Pieza más reciente del fondo.\n\nEncuentro en parada de metro y traslado a La Gavia, con destino New Yorker. Se adquieren varias prendas. Una de ellas, la de él, llega defectuosa y hay que devolverla.\n\nElla estrena el vestido. En este punto el catálogo abandona su neutralidad habitual: la nota original del autor dice «es la tía más preciosa que vi en mi vida», y se ha decidido conservarla sin corregir.\n\nComida en Foster's Hollywood y traslado en Uber al parque, donde se entrega la depiladora solicitada. Se documenta alegría.\n\nAl final de la jornada ella se encuentra mal. Se registra, igualmente, como buen día.",
+      nota:"Te pusiste el vestido y se me olvidó el resto del plan que llevaba pensado."
+    }
+  ];
+
+  /* Sala final: se abre al visitar las siete. Sin foto: aquí habla él. */
+  var FINAL = {
+    n:'VIII', num:'008',
+    titulo:"Olivia",
+    epoca:"Sin fecha",
+    lugar:"Todas las salas a la vez",
+    tecnica:"Texto. Sin soporte físico y sin cristal delante",
+    ficha:"Última sala. Aquí no hay pieza que enseñar, y el museo deja de hablar como museo.\n\nOlivia: has sido mi primera chica en serio, y contigo he aprendido a querer. Eso no me lo había enseñado nadie antes de ti. Lo he aprendido por las buenas y, sobre todo, por las malas, que son las que de verdad se quedan.\n\nSoy celoso. He sido, soy y voy a seguir siendo, y no te lo voy a vender como una virtud. Pero quiero que sepas de dónde viene: no es que desconfíe de ti, es que no soporto la idea de que una falta de cariño o de cercanía me vaya separando poco a poco de la mujer de mi vida. Es miedo a perderte. Detrás no hay nada más.\n\nY luego hay una lista, y quiero que quede claro lo que es: no son cosas que compartamos por casualidad. Son cosas que conozco por ti. No las había escuchado, ni visto, ni pisado antes de que aparecieras, y ahora no puedo con ninguna de ellas sin que estés dentro:",
+    lista:["Marc Seguí","Fernandocosta","Xavibó","Walls","Maluma","Doble0","Almería","Benny","Cantabria"],
+    ficha2:"Y mil cosas más que no caben en una cartela. Todas tuyas antes que mías.\n\nSé que no todo ha sido bonito, y sé que lo malo venía cuando tú no estabas bien contigo misma. Lo entiendo, no te lo guardo, y no es lo que me llevo de aquí.\n\nLo que me llevo es que, de todo lo que he conocido en mi vida, tú eres lo que volvería a elegir. No quiero una versión tuya más fácil, ni más tranquila, ni más parecida a lo que se supone que debería querer. Te quiero a ti, entera, tal y como vienes.\n\nAntes he dicho «la mujer de mi vida» hablando de mi miedo a perderte. Lo repito aquí sin miedo de ninguna clase, porque es lo único de este museo que no necesita cartela, ni fecha, ni explicación: eres la mujer de mi vida, Olivia. Lo eras ya en la Plaza de San Cayetano, cuando ninguno de los dos lo sabía todavía, y lo sigues siendo hoy.",
+    nota:"Siete veces, Olivia, y en siete me has cambiado la vida. No me quiero ni imaginar lo que queda por catalogar. Este museo no cierra nunca: la sala IX la inauguramos el día que tú digas."
+  };
+
+  var PEND = '<span class="pendiente">en catalogación</span>';
+  var KEY = 'msd-salas-visitadas';
+
+  var plano = document.getElementById('plano');
+  var vistaPlano = document.getElementById('vista-plano');
+  var vistaPieza = document.getElementById('vista-pieza');
+  var cartela = document.getElementById('cartela');
+  var progreso = document.getElementById('progreso');
+  var notaCerrada = document.getElementById('nota-cerrada');
+  var btnPrev = document.getElementById('prev');
+  var btnNext = document.getElementById('next');
+
+  var visitadas = cargar();
+  var abierta = null;
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+  function campo(v){ return v ? esc(v) : PEND; }
+  function parrafos(v){
+    if(!v) return '<p>' + PEND + '</p>';
+    return String(v).split(/\n\s*\n/).map(function(p){
+      return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+  }
+
+  function cargar(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  function guardar(){
+    try{ localStorage.setItem(KEY, JSON.stringify(visitadas)); }catch(e){}
+  }
+  function completo(){ return visitadas.length >= SALAS.length; }
+
+  function pintarPlano(){
+    var html = SALAS.map(function(s, i){
+      var visto = visitadas.indexOf(i) > -1 ? '1' : '0';
+      return '<button class="sala" data-i="' + i + '" data-visto="' + visto + '" style="--d:' + i + '">' +
+        '<span class="sala-num">Sala ' + s.n + '</span>' +
+        '<span class="visto" aria-hidden="true"></span>' +
+        '<span class="sala-tit">' + (s.titulo ? esc(s.titulo) : 'Sin catalogar') + '</span>' +
+        '<span class="sala-meta">' + (s.epoca ? esc(s.epoca) : '&mdash;') + '</span>' +
+      '</button>';
+    }).join('');
+
+    var abiertoFinal = completo();
+    html += '<button class="sala final' + (abiertoFinal ? '' : ' locked') + '" data-i="final" data-visto="0" style="--d:7">' +
+      '<span class="sala-num">Sala ' + FINAL.n + '</span>' +
+      '<span class="sala-tit">' + (abiertoFinal ? (FINAL.titulo ? esc(FINAL.titulo) : 'Sala sin catalogar') : 'Cerrada al público') + '</span>' +
+      '<span class="sala-meta">' + (abiertoFinal ? 'Abierta' : 'Se abre al terminar el recorrido') + '</span>' +
+    '</button>';
+
+    plano.innerHTML = html;
+    progreso.textContent = visitadas.length + ' de ' + SALAS.length + ' salas visitadas';
+  }
+
+  function pintarPieza(id){
+    var esFinal = id === 'final';
+    var s = esFinal ? FINAL : SALAS[id];
+    var bloque = '';
+    var cierre = '';
+
+    if(s.lista && s.lista.length){
+      bloque = '<div class="inventario">' +
+        '<p class="label">Fondo sonoro y geográfico · Donación de Olivia</p>' +
+        '<ul>' + s.lista.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
+        '<p class="pie-lista">Todas estas piezas entraron en el museo por ella. Lista abierta: sigue creciendo.</p>' +
+      '</div>';
+    }
+    if(s.ficha2){
+      cierre = '<div class="p-ficha">' + parrafos(s.ficha2) + '</div>';
+    }
+
+    cartela.innerHTML =
+      '<p class="inv">MSD · SALA ' + s.n + ' · INV. ' + esc(s.num) + '</p>' +
+      '<h2 class="p-titulo">' + (s.titulo ? esc(s.titulo) : 'Obra sin título') + '</h2>' +
+      '<p class="p-sub">' + campo(s.epoca) + ' &middot; ' + campo(s.lugar) + '</p>' +
+      '<dl class="ficha-tecnica">' +
+        '<dt>Técnica</dt><dd>' + campo(s.tecnica) + '</dd>' +
+        '<dt>Localización</dt><dd>' + campo(s.lugar) + '</dd>' +
+        '<dt>Procedencia</dt><dd>Madrid. Colección de los dos.</dd>' +
+      '</dl>' +
+      '<div class="p-ficha">' + parrafos(s.ficha) + '</div>' +
+      bloque +
+      cierre +
+      '<blockquote class="p-nota"><p class="label">Nota del comisario</p><p class="cita">' +
+        (s.nota ? esc(s.nota) : PEND) +
+      '</p></blockquote>';
+
+    btnPrev.disabled = esFinal || id <= 0;
+    btnNext.disabled = esFinal || id >= SALAS.length - 1;
+  }
+
+  function abrir(id){
+    abierta = id;
+    if(id !== 'final' && visitadas.indexOf(id) === -1){
+      visitadas.push(id);
+      guardar();
+    }
+    pintarPieza(id);
+    pintarPlano();
+    vistaPlano.hidden = true;
+    vistaPieza.hidden = false;
+    notaCerrada.hidden = true;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function cerrar(){
+    abierta = null;
+    vistaPieza.hidden = true;
+    vistaPlano.hidden = false;
+    pintarPlano();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  plano.addEventListener('click', function(ev){
+    var b = ev.target.closest('.sala');
+    if(!b) return;
+    var raw = b.getAttribute('data-i');
+    if(raw === 'final'){
+      if(!completo()){
+        notaCerrada.textContent = 'Esta sala se abre al visitar las siete. Te quedan ' +
+          (SALAS.length - visitadas.length) + '.';
+        notaCerrada.hidden = false;
+        return;
+      }
+      abrir('final');
+      return;
+    }
+    abrir(Number(raw));
+  });
+
+  document.getElementById('volver').addEventListener('click', cerrar);
+  document.getElementById('al-plano').addEventListener('click', cerrar);
+  btnPrev.addEventListener('click', function(){
+    if(abierta !== 'final' && abierta > 0) abrir(abierta - 1);
+  });
+  btnNext.addEventListener('click', function(){
+    if(abierta !== 'final' && abierta < SALAS.length - 1) abrir(abierta + 1);
+  });
+  document.addEventListener('keydown', function(ev){
+    if(vistaPieza.hidden) return;
+    if(ev.key === 'Escape') cerrar();
+    if(ev.key === 'ArrowLeft' && !btnPrev.disabled) btnPrev.click();
+    if(ev.key === 'ArrowRight' && !btnNext.disabled) btnNext.click();
+  });
+
+  function start(data){
+    pintarPlano();
+    if(data && data.abierta !== null && data.abierta !== undefined) abrir(data.abierta);
+  }
+
+  try{
+    var hot = window.claude && window.claude.hot;
+    if(hot){
+      if(hot.snapshot) hot.snapshot(function(){ return {abierta: abierta}; });
+      if(hot.ready) hot.ready(start); else start(hot.data || {});
+    } else {
+      start({});
+    }
+  }catch(e){ start({}); }
+})();
+</script>
+</body>
+</html>
